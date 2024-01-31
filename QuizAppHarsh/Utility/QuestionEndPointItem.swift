@@ -2,13 +2,13 @@
 //  ProductEndPointItem.swift
 //  SwiftApiMVVM
 //
-//  Created by My Mac Mini on 09/01/24.
-//
+//  Created by My Mac Mini  HARSH DARJI on 09/01/24.
+//  https://github.com/dev1008iharsh?tab=repositories
 
 import Foundation
 
 enum QuestionEndPointItem {
-    case questions // get product
+    case questions // get questions
 }
 
 //https://run.mocky.io/v3/8787374e-76f5-4506-bcf1-506720e2e04d

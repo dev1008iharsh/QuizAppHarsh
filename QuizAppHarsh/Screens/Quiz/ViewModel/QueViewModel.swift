@@ -2,8 +2,8 @@
 //  QueViewModel.swift
 //  QuizAppHarsh
 //
-//  Created by My Mac Mini on 30/01/24.
-//
+//  Created by My Mac Mini  HARSH DARJI  on 30/01/24.
+//  https://github.com/dev1008iharsh?tab=repositories
 
 import Foundation
 
@@ -14,7 +14,7 @@ final class QueViewModel{
     
     var eventHandler : ((_ event : Event) -> Void)?
  
-    func fetchQuestions(){
+    func fetchQuestionsApi(){
          
         eventHandler?(.loading)
 
@@ -27,7 +27,13 @@ final class QueViewModel{
             switch response{
             case .success(let quesFromApi):
                 
-                self.arrQuestions = quesFromApi[randomPick: 10]
+                if Constant.shared.totalQuestionToBeAsked <= quesFromApi.count{
+                    self.arrQuestions = quesFromApi[randomPick: Constant.shared.totalQuestionToBeAsked]
+                }else{
+                    print("not enought element in array to be fetched")
+                    self.arrQuestions = []
+                }
+                
                 eventHandler?(.dataLoaded)
                 
             case .failure(let error):

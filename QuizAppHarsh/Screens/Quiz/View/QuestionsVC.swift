@@ -12,6 +12,7 @@ class QuestionsVC: UIViewController {
     //MARK: -  @IBOutlet
     
     @IBOutlet weak var quesNumber: UILabel!
+    
     @IBOutlet weak var collvQuestions: UICollectionView!
     
     @IBOutlet weak var btnSubmit: UIButton!
@@ -21,6 +22,7 @@ class QuestionsVC: UIViewController {
     @IBOutlet weak var btnPrevious: UIButton!
     
     
+    
     //MARK: -  Properties
     private var viewModel = QueViewModel()
     
@@ -28,13 +30,19 @@ class QuestionsVC: UIViewController {
     var totalQuestions = 0
     var skipedQuestions = 0
     
+    var activityView: UIActivityIndicatorView?
+     
     //MARK: -  ViewController LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.showActivityIndicator()
+        
         configuration()
+        
         btnSubmit.isHidden = true
         
+       
     }
     
     
@@ -65,14 +73,25 @@ class QuestionsVC: UIViewController {
             }
         }
         
-        let nextVC = self.storyboard?.instantiateViewController(withIdentifier: "ResultVC") as! ResultVC
+        let nextVC = self.storyboard?.instantiateViewController(withIdentifier: Constant.shared.VC_RESULT_VC) as! ResultVC
         nextVC.totalQuestions = self.viewModel.arrQuestions.count
         nextVC.skipedQuestions = skipedQuestions
         nextVC.counterCorrectAnswer = self.counterCorrectAnswer
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
-    
+    // This is calling here because we don't need anywhere else. Otherwise, it should be a global code with access from everywhere for reusability.
+    func showActivityIndicator() {
+        activityView = UIActivityIndicatorView(style: .large)
+        activityView?.center = self.view.center
+        self.view.addSubview(activityView!)
+        activityView?.startAnimating()
+    }
+    func hideActivityIndicator(){
+        if (activityView != nil){
+            activityView?.stopAnimating()
+        }
+    }
     
 }
 
@@ -84,13 +103,13 @@ extension QuestionsVC{
         
         collvQuestions.dataSource = self
         collvQuestions.delegate = self
-        
+         
         initViewModel()
         observeEvent()
     }
     
     func initViewModel(){
-        viewModel.fetchQuestions()
+        viewModel.fetchQuestionsApi()
     }
     
     func observeEvent(){
@@ -100,9 +119,12 @@ extension QuestionsVC{
             switch event {
             case .loading:
                 print("data loading")
+                 
             case .stopLoading:
                 print("loading finished")
-                
+                DispatchQueue.main.async {
+                    self.hideActivityIndicator()
+                }
             case .dataLoaded:
                 print(viewModel.arrQuestions)
                 DispatchQueue.main.async {
@@ -130,11 +152,11 @@ extension QuestionsVC : UICollectionViewDataSource, UICollectionViewDelegate,UIC
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         //print("viewModel.arrQuestions",viewModel.arrQuestions)
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "QuestionCVC", for: indexPath) as? QuestionCVC else {return UICollectionViewCell()}
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constant.shared.CELL_QUESTION_CVC, for: indexPath) as? QuestionCVC else {return UICollectionViewCell()}
         
         cell.lblQues.text = viewModel.arrQuestions[indexPath.row].question
         cell.currentIndex = String(indexPath.row)
-        self.quesNumber.text = "\(indexPath.row + 1) of 10"
+        self.quesNumber.text = "\(indexPath.row + 1) of \(Constant.shared.totalQuestionToBeAsked)"
         
         cell.queModel = viewModel.arrQuestions[indexPath.row]
         cell.configureArray()

@@ -3,7 +3,7 @@
 //  QuizAppHarsh
 //
 //  Created by My Mac Mini on 30/01/24.
-//
+//  https://github.com/dev1008iharsh?tab=repositories
 
 import UIKit
 
@@ -32,5 +32,9 @@ class ResultVC: UIViewController {
         
     }
     
- 
+    @IBAction func btnRestart(_ sender: UIButton) {
+        let nextVC = self.storyboard?.instantiateViewController(withIdentifier: Constant.shared.VC_QUESTIONS_VC) as! QuestionsVC
+        self.navigationController?.pushViewController(nextVC, animated: true)
+    }
+    
 }

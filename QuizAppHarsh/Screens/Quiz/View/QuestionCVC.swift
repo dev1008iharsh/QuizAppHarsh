@@ -2,35 +2,38 @@
 //  QuestionCVC.swift
 //  QuizAppHarsh
 //
-//  Created by My Mac Mini on 30/01/24.
-//
+//  Created by My Mac Mini  HARSH DARJI on 30/01/24.
+//  https://github.com/dev1008iharsh?tab=repositories
 
 import UIKit
 
 class QuestionCVC: UICollectionViewCell {
-    
+    //MARK: -  @IBOutlet
     @IBOutlet weak var tblAnswers: UITableView!
     
     @IBOutlet weak var lblQues: UILabel!
     
+    
+    //MARK: -  Properties
     var arrAnswers = [String]()
-    
-    //var strUserTapped : String?
-    
+  
     var currentIndex : String?
     
     var strCorrectAns : String?
-    
-    //var selectedCheckedIndex : Int?
-    //var arrSelectedCheckedIndex = [Int]()
-    
+     
     var queModel : QueModel?
+    
     var userSelectedAns : ((String) -> Void)?
     
+    var dictSelected = [String : Int]()
    
+    
+    
     func configureArray(){
         tblAnswers.delegate = self
         tblAnswers.dataSource = self
+        
+        //This is wrong functionality from API because they should give an array of answers.
         
         var arrLocal = [String]()
         
@@ -58,73 +61,45 @@ class QuestionCVC: UICollectionViewCell {
     
 }
 
+
+//MARK: -  UITableViewDelegate, UITableViewDataSource
 extension QuestionCVC : UITableViewDelegate, UITableViewDataSource {
-    
-    
-    
+     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return arrAnswers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "AnswersTVC", for: indexPath) as? AnswersTVC else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: Constant.shared.CELL_ANSWERS_TVC, for: indexPath) as? AnswersTVC else {
             return UITableViewCell()
         }
-        cell.lblAnswer.text = ""
+        cell.selectionStyle = .none
         cell.lblAnswer.text = arrAnswers[indexPath.row]
-        
-        cell.imgSelected.image = UIImage(named: "uncheck")
-        //print("**",Constant.shared.dictSelected)
-        if indexPath.row == Constant.shared.dictSelected[currentIndex ?? "-1"]{
-            cell.imgSelected.image = UIImage(named: "check")
+        if indexPath.row == self.dictSelected[currentIndex ?? "-1"]{
+            cell.imgSelected.image = UIImage(named: Constant.shared.IMG_CHECKED)
         }else{
-            cell.imgSelected.image = UIImage(named: "uncheck")
+            cell.imgSelected.image = UIImage(named: Constant.shared.IMG_UN_CHECKED)
         }
-        
-        /*
-        if indexPath.row == self.selectedCheckedIndex{
-            cell.imgSelected.image = UIImage(named: "check")
-        }else{
-            cell.imgSelected.image = UIImage(named: "uncheck")
-        }
-       
-        if let tapAns = strUserTapped{
-            if tapAns == arrAnswers[indexPath.row]{
-                cell.imgSelected.image = UIImage(named: "check")
-            }else{
-                cell.imgSelected.image = UIImage(named: "uncheck")
-            }
-        }else{
-            cell.imgSelected.image = UIImage(named: "uncheck")
-        }*/
          
-        
         return cell
         
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return UITableView.automaticDimension
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //print("*arrAnswers[indexPath.row]",arrAnswers[indexPath.row])
-        //arrSelectedCheckedIndex.append(<#T##newElement: Int##Int#>)
-        //self.selectedCheckedIndex = indexPath.row
+     
+        self.dictSelected[currentIndex ?? "-1"] = indexPath.row
         
-        Constant.shared.dictSelected[currentIndex ?? "-1"] = indexPath.row
         let answer = "ans\(indexPath.row+1)"
+        
         self.userSelectedAns?(answer)
         
         self.tblAnswers.reloadData()
        
     }
-    /*
-     if self.selectedCheckedIndex == indexPath.row{
-         self.selectedCheckedIndex = -1
-     }else{
-        
-     }*/
-    
+
 }
 
